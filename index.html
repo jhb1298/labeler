@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Labeling App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        #loginModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        #loginModal.hidden {
+            display: none;
+        }
+        .login-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-box h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .login-box button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-box button:hover {
+            background-color: #0056b3;
+        }
+        .login-box p {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 28px;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .image-section, .input-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .zoom-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            touch-action: pinch-zoom;
+        }
+        #imageCanvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform-origin: center;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .nav-buttons button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .nav-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .jump-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .jump-input input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .input-section input, .input-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+        .input-section textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .save-btn:hover {
+            background-color: #218838;
+        }
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+            }
+            .image-section {
+                width: 66%;
+            }
+            .input-section {
+                width: 34%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden">
+        <div class="login-box">
+            <h2>Login</h2>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="login()">Login</button>
+            <p id="loginError">Incorrect password</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container hidden">
+        <div class="header">
+            <h1>Image Labeling App</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div class="main-content">
+            <!-- Image Section -->
+            <div class="image-section">
+                <div class="zoom-container" id="zoomContainer">
+                    <img id="imageCanvas" src="" alt="Image">
+                </div>
+                <div class="nav-buttons">
+                    <button onclick="prevImage()">Previous</button>
+                    <div class="jump-input">
+                        <input type="number" id="jumpInput" placeholder="Image index">
+                        <button onclick="jumpToImage()">Jump</button>
+                    </div>
+                    <button onclick="nextImage()">Next</button>
+                </div>
+            </div>
+            <!-- Label and Notes Section -->
+            <div class="input-section">
+                <label>Label</label>
+                <input type="text" id="labelInput" placeholder="Enter label">
+                <label>Notes</label>
+                <textarea id="notesInput" placeholder="Enter notes"></textarea>
+                <button class="save-btn" onclick="saveData()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PASSWORDS = ["pass1", "pass2", "pass3", "pass4", "pass5", "pass6", "pass7"];
+        let isLoggedIn = false;
+        let currentImageIndex = 0;
+        let zoomLevel = 1;
+        let currentUser = "";
+        const images = []; // To store image URLs from Cloudinary
+        let labels = []; // To store labels and notes from MongoDB
+
+        // Simulated Cloudinary and MongoDB API endpoints (replace with actual endpoints)
+        const CLOUDINARY_API = "https://api.cloudinary.com/v1_1/your_cloud_name/resources/image";
+        const MONGODB_API = "/api/labels"; // Backend API endpoint
+
+        // Check login status on page load
+        window.onload = () => {
+            const savedPassword = localStorage.getItem("password");
+            if (PASSWORDS.includes(savedPassword)) {
+                currentUser = savedPassword;
+                loginSuccess();
+            } else {
+                document.getElementById("loginModal").classList.remove("hidden");
+            }
+            setupPinchZoom();
+        };
+
+        // Login function
+        function login() {
+            const password = document.getElementById("passwordInput").value;
+            if (PASSWORDS.includes(password)) {
+                localStorage.setItem("password", password);
+                currentUser = password;
+                loginSuccess();
+            } else {
+                document.getElementById("loginError").style.display = "block";
+            }
+        }
+
+        // Login success
+        async function loginSuccess() {
+            isLoggedIn = true;
+            document.getElementById("loginModal").classList.add("hidden");
+            document.getElementById("mainContent").classList.remove("hidden");
+            await loadImages();
+            await loadLabels();
+            loadImage(currentImageIndex);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem("password");
+            isLoggedIn = false;
+            currentUser = "";
+            document.getElementById("mainContent").classList.add("hidden");
+            document.getElementById("loginModal").classList.remove("hidden");
+            document.getElementById("passwordInput").value = "";
+            document.getElementById("loginError").style.display = "none";
+        }
+
+        // Load images from Cloudinary
+        async function loadImages() {
+            try {
+                const response = await fetch(CLOUDINARY_API, {
+                    headers: { Authorization: "Bearer YOUR_CLOUDINARY_API_KEY" }
+                });
+                const data = await response.json();
+                images.push(...data.resources.map(r => r.secure_url));
+            } catch (error) {
+                console.error("Error loading images:", error);
+            }
+        }
+
+        // Load labels from MongoDB
+        async function loadLabels() {
+            try {
+                const response = await fetch(MONGODB_API);
+                labels = await response.json();
+            } catch (error) {
+                console.error("Error loading labels:", error);
+            }
+        }
+
+        // Load image by index
+        function loadImage(index) {
+            if (index < 0 || index >= images.length) return;
+            currentImageIndex = index;
+            const img = document.getElementById("imageCanvas");
+            img.src = images[index];
+            img.style.transform = `scale(${zoomLevel})`;
+            const labelData = labels.find(l => l.imageIndex === index) || { label: "", notes: "" };
+            document.getElementById("labelInput").value = labelData.label;
+            document.getElementById("notesInput").value = labelData.notes;
+            document.getElementById("jumpInput").value = index;
+        }
+
+        // Previous image
+        function prevImage() {
+            if (currentImageIndex > 0) {
+                loadImage(currentImageIndex - 1);
+            }
+        }
+
+        // Next image
+        function nextImage() {
+            if (currentImageIndex < images.length - 1) {
+                loadImage(currentImageIndex + 1);
+            }
+        }
+
+        // Jump to specific image
+        function jumpToImage() {
+            const index = parseInt(document.getElementById("jumpInput").value);
+            if (!isNaN(index) && index >= 0 && index < images.length) {
+                loadImage(index);
+            }
+        }
+
+        // Setup pinch-to-zoom for mobile
+        function setupPinchZoom() {
+            const zoomContainer = document.getElementById("zoomContainer");
+            const img = document.getElementById("imageCanvas");
+            let startDistance = 0;
+            let startZoom = zoomLevel;
+
+            zoomContainer.addEventListener("touchstart", (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    startDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    startZoom = zoomLevel;
+                }
+            });
+
+            zoomContainer.addEventListener("touchmove", (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDistance = Math.hypot(
+                        e.touches[0].pageX - e.touches[1].pageX,
+                        e.touches[0].pageY - e.touches[1].pageY
+                    );
+                    zoomLevel = Math.max(0.5, Math.min(3, startZoom * (currentDistance / startDistance)));
+                    img.style.transform = `scale(${zoomLevel})`;
+                }
+            });
+
+            zoomContainer.addEventListener("touchend", (e) => {
+                if (e.touches.length < 2) {
+                    startDistance = 0;
+                    startZoom = zoomLevel;
+                }
+            });
+        }
+
+        // Save label and notes
+        async function saveData() {
+            if (!isLoggedIn) return;
+            const label = document.getElementById("labelInput").value;
+            const notes = document.getElementById("notesInput").value;
+            try {
+                await fetch(MONGODB_API, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        imageIndex: currentImageIndex,
+                        label,
+                        notes,
+                        modifiedBy: currentUser // Store user's password as modifier
+                    })
+                });
+                const labelIndex = labels.findIndex(l => l.imageIndex === currentImageIndex);
+                if (labelIndex >= 0) {
+                    labels[labelIndex] = { imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser };
+                } else {
+                    labels.push({ imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser });
+                }
+                alert("Data saved successfully!");
+            } catch (error) {
+                console.error("Error saving data:", error);
+                alert("Failed to save data.");
+            }
+        }
+    </script>
+</body>
+</html>
