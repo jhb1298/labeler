@@ -238,8 +238,8 @@
         const images = []; // To store image URLs from Cloudinary
         let labels = []; // To store labels and notes from MongoDB
 
-        // Simulated Cloudinary and MongoDB API endpoints (replace with actual endpoints)
-        const CLOUDINARY_API = "https://api.cloudinary.com/v1_1/your_cloud_name/resources/image";
+        // Cloudinary and MongoDB API endpoints
+        const CLOUDINARY_API = "https://api.cloudinary.com/v1_1/dapnfbeyi/resources/image?prefix=xyz";
         const MONGODB_API = "/api/labels"; // Backend API endpoint
 
         // Check login status on page load
@@ -290,13 +290,20 @@
         // Load images from Cloudinary
         async function loadImages() {
             try {
+                const API_KEY = "347784612898672";
+                const API_SECRET = "I7f-olOrhvFV7r7vg1rWro32Tzk";
+                const auth = btoa(`${API_KEY}:${API_SECRET}`);
                 const response = await fetch(CLOUDINARY_API, {
-                    headers: { Authorization: "Bearer YOUR_CLOUDINARY_API_KEY" }
+                    headers: { Authorization: `Basic ${auth}` }
                 });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
+                if (!data.resources) throw new Error("No resources found in Cloudinary response");
                 images.push(...data.resources.map(r => r.secure_url));
+                if (images.length === 0) throw new Error("No images loaded from Cloudinary");
             } catch (error) {
                 console.error("Error loading images:", error);
+                alert("Failed to load images from Cloudinary.");
             }
         }
 
@@ -304,9 +311,11 @@
         async function loadLabels() {
             try {
                 const response = await fetch(MONGODB_API);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 labels = await response.json();
             } catch (error) {
                 console.error("Error loading labels:", error);
+                alert("Failed to load labels from MongoDB.");
             }
         }
 
@@ -318,8 +327,8 @@
             img.src = images[index];
             img.style.transform = `scale(${zoomLevel})`;
             const labelData = labels.find(l => l.imageIndex === index) || { label: "", notes: "" };
-            document.getElementById("labelInput").value = labelData.label;
-            document.getElementById("notesInput").value = labelData.notes;
+            document.getElementById("labelInput").value = labelData.label || "";
+            document.getElementById("notesInput").value = labelData.notes || "";
             document.getElementById("jumpInput").value = index;
         }
 
@@ -342,6 +351,8 @@
             const index = parseInt(document.getElementById("jumpInput").value);
             if (!isNaN(index) && index >= 0 && index < images.length) {
                 loadImage(index);
+            } else {
+                alert("Invalid image index.");
             }
         }
 
@@ -389,7 +400,7 @@
             const label = document.getElementById("labelInput").value;
             const notes = document.getElementById("notesInput").value;
             try {
-                await fetch(MONGODB_API, {
+                const response = await fetch(MONGODB_API, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -399,6 +410,7 @@
                         modifiedBy: currentUser // Store user's password as modifier
                     })
                 });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const labelIndex = labels.findIndex(l => l.imageIndex === currentImageIndex);
                 if (labelIndex >= 0) {
                     labels[labelIndex] = { imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser };
