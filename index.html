@@ -235,14 +235,13 @@
         let currentImageIndex = 0;
         let zoomLevel = 1;
         let currentUser = "";
-        const images = []; // To store image URLs from Cloudinary
-        let labels = []; // To store labels and notes from MongoDB
+        const imageBase = "https://res.cloudinary.com/dapnfbeyi/image/upload/xyz/";
+        const maxIndex = 4; // Based on im1.jpg to im4.jpg
 
-        // Cloudinary and MongoDB API endpoints
-        const CLOUDINARY_API = "https://api.cloudinary.com/v1_1/dapnfbeyi/resources/image?prefix=xyz";
-        const MONGODB_API = "/api/labels"; // Backend API endpoint
+        let labels = [];
 
-        // Check login status on page load
+        const MONGODB_API = "http://localhost:3000/api/labels"; // Adjust port if needed
+
         window.onload = () => {
             const savedPassword = localStorage.getItem("password");
             if (PASSWORDS.includes(savedPassword)) {
@@ -254,7 +253,6 @@
             setupPinchZoom();
         };
 
-        // Login function
         function login() {
             const password = document.getElementById("passwordInput").value;
             if (PASSWORDS.includes(password)) {
@@ -266,17 +264,14 @@
             }
         }
 
-        // Login success
         async function loginSuccess() {
             isLoggedIn = true;
             document.getElementById("loginModal").classList.add("hidden");
             document.getElementById("mainContent").classList.remove("hidden");
-            await loadImages();
             await loadLabels();
             loadImage(currentImageIndex);
         }
 
-        // Logout function
         function logout() {
             localStorage.removeItem("password");
             isLoggedIn = false;
@@ -287,27 +282,6 @@
             document.getElementById("loginError").style.display = "none";
         }
 
-        // Load images from Cloudinary
-        async function loadImages() {
-            try {
-                const API_KEY = "347784612898672";
-                const API_SECRET = "I7f-olOrhvFV7r7vg1rWro32Tzk";
-                const auth = btoa(`${API_KEY}:${API_SECRET}`);
-                const response = await fetch(CLOUDINARY_API, {
-                    headers: { Authorization: `Basic ${auth}` }
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                if (!data.resources) throw new Error("No resources found in Cloudinary response");
-                images.push(...data.resources.map(r => r.secure_url));
-                if (images.length === 0) throw new Error("No images loaded from Cloudinary");
-            } catch (error) {
-                console.error("Error loading images:", error);
-                alert("Failed to load images from Cloudinary.");
-            }
-        }
-
-        // Load labels from MongoDB
         async function loadLabels() {
             try {
                 const response = await fetch(MONGODB_API);
@@ -319,12 +293,11 @@
             }
         }
 
-        // Load image by index
         function loadImage(index) {
-            if (index < 0 || index >= images.length) return;
+            if (index < 0 || index >= maxIndex) return;
             currentImageIndex = index;
             const img = document.getElementById("imageCanvas");
-            img.src = images[index];
+            img.src = `${imageBase}im${currentImageIndex + 1}.jpg`; // +1 because indices start at 0, images at im1
             img.style.transform = `scale(${zoomLevel})`;
             const labelData = labels.find(l => l.imageIndex === index) || { label: "", notes: "" };
             document.getElementById("labelInput").value = labelData.label || "";
@@ -332,31 +305,27 @@
             document.getElementById("jumpInput").value = index;
         }
 
-        // Previous image
         function prevImage() {
             if (currentImageIndex > 0) {
                 loadImage(currentImageIndex - 1);
             }
         }
 
-        // Next image
         function nextImage() {
-            if (currentImageIndex < images.length - 1) {
+            if (currentImageIndex < maxIndex - 1) {
                 loadImage(currentImageIndex + 1);
             }
         }
 
-        // Jump to specific image
         function jumpToImage() {
             const index = parseInt(document.getElementById("jumpInput").value);
-            if (!isNaN(index) && index >= 0 && index < images.length) {
+            if (!isNaN(index) && index >= 0 && index < maxIndex) {
                 loadImage(index);
             } else {
-                alert("Invalid image index.");
+                alert("Invalid image index. Must be between 0 and " + (maxIndex - 1));
             }
         }
 
-        // Setup pinch-to-zoom for mobile
         function setupPinchZoom() {
             const zoomContainer = document.getElementById("zoomContainer");
             const img = document.getElementById("imageCanvas");
@@ -394,7 +363,6 @@
             });
         }
 
-        // Save label and notes
         async function saveData() {
             if (!isLoggedIn) return;
             const label = document.getElementById("labelInput").value;
@@ -407,17 +375,22 @@
                         imageIndex: currentImageIndex,
                         label,
                         notes,
-                        modifiedBy: currentUser // Store user's password as modifier
+                        modifiedBy: currentUser
                     })
                 });
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const labelIndex = labels.findIndex(l => l.imageIndex === currentImageIndex);
-                if (labelIndex >= 0) {
-                    labels[labelIndex] = { imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser };
+                const result = await response.json();
+                if (result.success) {
+                    const labelIndex = labels.findIndex(l => l.imageIndex === currentImageIndex);
+                    if (labelIndex >= 0) {
+                        labels[labelIndex] = { imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser };
+                    } else {
+                        labels.push({ imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser });
+                    }
+                    alert("Data saved successfully!");
                 } else {
-                    labels.push({ imageIndex: currentImageIndex, label, notes, modifiedBy: currentUser });
+                    alert("Failed to save data: " + (result.error || "Unknown error"));
                 }
-                alert("Data saved successfully!");
             } catch (error) {
                 console.error("Error saving data:", error);
                 alert("Failed to save data.");
