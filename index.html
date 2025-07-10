@@ -32,20 +32,20 @@
         }
         .login-box {
             background-color: white;
-            padding: 15px;
+            padding: 15px; /* Reduced padding for mobile */
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            width: 90%;
+            width: 90%; /* Responsive width */
             max-width: 400px;
             text-align: center;
         }
         .login-box h2 {
-            font-size: 20px;
+            font-size: 20px; /* Reduced font size for mobile */
             margin-bottom: 12px;
         }
         .login-box input {
             width: 100%;
-            padding: 8px;
+            padding: 8px; /* Reduced padding for mobile */
             margin-bottom: 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -54,24 +54,24 @@
         .login-box button {
             background-color: #007bff;
             color: white;
-            padding: 8px 16px;
+            padding: 8px 16px; /* Reduced padding for mobile */
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 14px; /* Reduced font size */
         }
         .login-box button:hover {
             background-color: #0056b3;
         }
         .login-box p {
             color: red;
-            margin-top: 8px;
+            margin-top: 8px; /* Reduced margin */
             display: none;
-            font-size: 12px;
+            font-size: 12px; /* Reduced font size */
         }
         .container {
-            width: 100%;
-            padding: 10px;
+            width: 100%; /* Full width */
+            padding: 10px; /* Reduced padding for mobile */
             flex-grow: 1;
             box-sizing: border-box;
         }
@@ -79,21 +79,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+            margin-bottom: 15px; /* Reduced margin */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
         .header h1 {
-            font-size: 24px;
-            margin: 0 0 10px 0;
+            font-size: 24px; /* Reduced font size for mobile */
+            margin: 0 0 10px 0; /* Add bottom margin for wrapping */
         }
         .logout-btn {
             background-color: #dc3545;
             color: white;
-            padding: 8px 16px;
+            padding: 8px 16px; /* Reduced padding for mobile */
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 14px; /* Reduced font size */
         }
         .logout-btn:hover {
             background-color: #c82333;
@@ -101,49 +101,50 @@
         .main-content {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
+            gap: 15px; /* Reduced gap for mobile */
+            overflow-y: auto; /* Allow vertical scrolling */
             width: 100%;
         }
         .image-section, .input-section {
             background-color: white;
-            padding: 15px;
+            padding: 15px; /* Reduced padding for mobile */
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            width: 100%; /* Full width on mobile */
         }
         .zoom-container {
             width: 100%;
-            height: 300px;
-            overflow: auto; /* Enable scrolling when zoomed */
+            height: 300px; /* Reduced height for mobile */
+            overflow: hidden;
             position: relative;
-            touch-action: pinch-zoom;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+            touch-action: pinch-zoom pan-x pan-y; /* Enable panning */
         }
         #imageCanvas {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transform-origin: 0 0; /* Change origin to top-left for better scrolling */
-            transition: transform 0.1s ease; /* Smooth transition for zoom */
+            transform-origin: center;
+            position: absolute; /* Enable positioning for panning */
+            top: 0;
+            left: 0;
         }
         .nav-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
+            margin-top: 12px; /* Reduced margin */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px; /* Add gap for wrapped items */
         }
         .nav-buttons button {
             background-color: #007bff;
             color: white;
-            padding: 8px 12px;
+            padding: 8px 12px; /* Reduced padding for mobile */
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            flex: 1;
-            min-width: 0;
+            font-size: 14px; /* Reduced font size */
+            flex: 1; /* Equal width distribution */
+            min-width: 0; /* Prevent overflow */
         }
         .nav-buttons button:hover {
             background-color: #0056b3;
@@ -151,44 +152,44 @@
         .jump-input {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 8px; /* Reduced gap */
+            flex-wrap: wrap; /* Allow wrapping */
         }
         .jump-input input {
-            width: 60px;
-            padding: 6px;
+            width: 60px; /* Reduced width for mobile */
+            padding: 6px; /* Reduced padding */
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 12px; /* Reduced font size */
         }
         .input-section label {
             display: block;
-            font-size: 12px;
+            font-size: 12px; /* Reduced font size */
             font-weight: bold;
-            margin-bottom: 6px;
+            margin-bottom: 6px; /* Reduced margin */
         }
         .input-section input, .input-section textarea {
             width: 100%;
-            padding: 8px;
+            padding: 8px; /* Reduced padding */
             border: 1px solid #ccc;
             border-radius: 4px;
-            margin-bottom: 12px;
+            margin-bottom: 12px; /* Reduced margin */
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 14px; /* Reduced font size */
         }
         .input-section textarea {
-            height: 100px;
+            height: 100px; /* Reduced height for mobile */
             resize: vertical;
         }
         .save-btn {
             background-color: #28a745;
             color: white;
-            padding: 8px 16px;
+            padding: 8px 16px; /* Reduced padding */
             border: none;
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
-            font-size: 14px;
+            font-size: 14px; /* Reduced font size */
         }
         .save-btn:hover {
             background-color: #218838;
@@ -198,18 +199,18 @@
                 flex-direction: row;
             }
             .image-section {
-                width: 65%;
-                max-width: 65%;
+                width: 65%; /* Adjusted to leave room for padding */
+                max-width: 65%; /* Ensure it doesn't exceed */
             }
             .input-section {
-                width: 35%;
-                max-width: 35%;
+                width: 35%; /* Adjusted to leave room for padding */
+                max-width: 35%; /* Ensure it doesn't exceed */
             }
             .zoom-container {
-                height: 400px;
+                height: 400px; /* Restore original height for desktop */
             }
             .input-section textarea {
-                height: 120px;
+                height: 120px; /* Restore original height for desktop */
             }
             .header h1 {
                 font-size: 28px;
@@ -316,6 +317,8 @@
         let currentImageIndex = 0;
         let zoomLevel = 1;
         let currentUser = "";
+        let translateX = 0; // X-axis translation for panning
+        let translateY = 0; // Y-axis translation for panning
         const imageBase = "https://res.cloudinary.com/dapnfbeyi/image/upload/xyz/";
         const maxIndex = 4; // Based on im1.jpg to im4.jpg
 
@@ -379,12 +382,11 @@
             currentImageIndex = index;
             const img = document.getElementById("imageCanvas");
             img.src = `${imageBase}im${currentImageIndex + 1}.jpg`; // +1 because indices start at 0, images at im1
-            img.style.transform = `scale(${zoomLevel})`;
+            applyTransform(img); // Apply both zoom and pan
             const labelData = labels.find(l => l.imageIndex === index) || { label: "", notes: "" };
             document.getElementById("labelInput").value = labelData.label || "";
             document.getElementById("notesInput").value = labelData.notes || "";
             document.getElementById("jumpInput").value = index;
-            updateScrollContainer(); // Ensure container adjusts to zoom
         }
 
         function prevImage() {
@@ -413,6 +415,9 @@
             const img = document.getElementById("imageCanvas");
             let startDistance = 0;
             let startZoom = zoomLevel;
+            let startX = 0;
+            let startY = 0;
+            let isPanning = false;
 
             zoomContainer.addEventListener("touchstart", (e) => {
                 if (e.touches.length === 2) {
@@ -422,59 +427,66 @@
                         e.touches[0].pageY - e.touches[1].pageY
                     );
                     startZoom = zoomLevel;
+                    isPanning = false; // Stop panning during pinch
+                } else if (e.touches.length === 1 && zoomLevel > 1) {
+                    e.preventDefault();
+                    startX = e.touches[0].pageX - translateX;
+                    startY = e.touches[0].pageY - translateY;
+                    isPanning = true; // Start panning
                 }
             });
 
             zoomContainer.addEventListener("touchmove", (e) => {
-                if (e.touches.length === 2) {
+                if (e.touches.length === 2 && startDistance > 0) {
                     e.preventDefault();
                     const currentDistance = Math.hypot(
                         e.touches[0].pageX - e.touches[1].pageX,
                         e.touches[0].pageY - e.touches[1].pageY
                     );
                     zoomLevel = Math.max(0.5, Math.min(3, startZoom * (currentDistance / startDistance)));
-                    img.style.transform = `scale(${zoomLevel})`;
-                    updateScrollContainer();
+                    applyTransform(img);
+                } else if (e.touches.length === 1 && isPanning && zoomLevel > 1) {
+                    e.preventDefault();
+                    const currentX = e.touches[0].pageX;
+                    const currentY = e.touches[0].pageY;
+                    translateX = currentX - startX;
+                    translateY = currentY - startY;
+                    applyTransform(img, true); // Apply panning with boundary check
                 }
             });
 
             zoomContainer.addEventListener("touchend", (e) => {
                 if (e.touches.length < 2) {
                     startDistance = 0;
-                    startZoom = zoomLevel;
+                    if (zoomLevel <= 1) {
+                        translateX = 0; // Reset pan when zoom out
+                        translateY = 0;
+                        applyTransform(img);
+                    }
+                    isPanning = false;
                 }
-            });
-
-            // Optional: Mouse wheel zoom for desktop
-            zoomContainer.addEventListener("wheel", (e) => {
-                e.preventDefault();
-                const delta = e.deltaY * -0.01;
-                zoomLevel = Math.max(0.5, Math.min(3, zoomLevel + delta));
-                img.style.transform = `scale(${zoomLevel})`;
-                updateScrollContainer();
             });
         }
 
-        function updateScrollContainer() {
-            const zoomContainer = document.getElementById("zoomContainer");
-            const img = document.getElementById("imageCanvas");
-            const containerWidth = zoomContainer.offsetWidth;
-            const containerHeight = zoomContainer.offsetHeight;
-            const naturalWidth = img.naturalWidth || containerWidth; // Fallback to container width if naturalWidth unavailable
-            const naturalHeight = img.naturalHeight || containerHeight; // Fallback to container height
-            const scaledWidth = naturalWidth * zoomLevel;
-            const scaledHeight = naturalHeight * zoomLevel;
+        function applyTransform(img, checkBounds = false) {
+            const container = document.getElementById("zoomContainer");
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            const imgWidth = img.naturalWidth * zoomLevel;
+            const imgHeight = img.naturalHeight * zoomLevel;
 
-            // Adjust container scrolling if image exceeds bounds
-            if (scaledWidth > containerWidth || scaledHeight > containerHeight) {
-                zoomContainer.style.overflow = "auto";
-            } else {
-                zoomContainer.style.overflow = "hidden"; // Reset if zoom is small
+            if (checkBounds && zoomLevel > 1) {
+                // Limit panning within container bounds
+                const maxTranslateX = (imgWidth - containerWidth) / 2;
+                const maxTranslateY = (imgHeight - containerHeight) / 2;
+                translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, translateX));
+                translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, translateY));
+            } else if (zoomLevel <= 1) {
+                translateX = 0; // Reset when not zoomed
+                translateY = 0;
             }
 
-            // Center the view on initial zoom
-            zoomContainer.scrollTop = (scaledHeight - containerHeight) / 2;
-            zoomContainer.scrollLeft = (scaledWidth - containerWidth) / 2;
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
         }
 
         async function saveData() {
